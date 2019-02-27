@@ -154,6 +154,27 @@
                 "user": "intelmq"
             }
         },
+        "Request Tracker Ticket": {
+            "description": "Request Tracker Ticket Collector fetches Ticket data from RT instance.",
+            "module": "intelmq.bots.collectors.rt.collector_rt_ticket",
+            "parameters": {
+                "feed": "Request Tracker Ticket",
+                "provider": "",
+                "password": "password",
+                "search_not_older_than": null,
+                "search_owner": "nobody",
+                "search_requestor": null,
+                "search_subject_like": "Report",
+                "search_queue": "Internal",
+                "search_status": "open",
+                "set_status": "finished",
+                "uri": "http://localhost/rt/REST/1.0",
+                "user": "intelmq",
+                "verify_cert": true,
+                "set_customfield": "_intelmq_processed",
+                "set_customfield_value": "1"
+            }
+        },
         "Rsync": {
             "description": "Collector for rsync data to file and fetches data from a rsync file.",
             "module": "intelmq.bots.collectors.rsync.collector_rsync",
@@ -538,6 +559,13 @@
             "parameters": {
                 "feedname": "",
                 "overwrite": true
+            }
+        },
+        "Request Tracker Ticket": {
+            "description": "Request Tracker Ticket Parser is the bot responsible to parse the report of Request Tracker Ticket data",
+            "module": "intelmq.bots.parsers.rt.parser",
+            "parameters": {
+                "fields_to_collect": null 
             }
         },
         "Shodan": {
