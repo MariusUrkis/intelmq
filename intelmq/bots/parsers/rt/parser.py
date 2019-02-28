@@ -70,8 +70,32 @@ class RTParserBotPlain(Bot):
         'Information disclosure': 'information-disclosure',
         'Vulnerable system': 'vulnerable-system',
         'Other': 'other',
-        'Test': 'test'
-    }
+        'Test': 'test',
+        'Harassment': 'harmful-speech',
+        'Child/sexual/violenc': 'violence',
+        'Virus': 'malware',
+        'Worm': 'malware',
+        'Trojan': 'malware',
+        'Spyware': 'malware',
+        'Dialer': 'malware',
+        'Rootkit': 'malware',
+        'Social engineering': 'social-engineering',
+        'Exploiting known vulnerabilities': 'ids alert',
+        'Privileged account compromise': 'privileged-account-compromise',
+        'Unprivileged account compromise': 'unprivileged-account-compromise',
+        'Application compromise': 'application-compromise',
+        'Bot': 'botnet drone',
+        'DoS': 'dos',
+        'DDoS': 'ddos',
+        'Confidentiality loss': 'Unauthorised-information-access',
+        'Integrity loss': 'Unauthorised-information-modification',
+        'Availabilty loss': 'data-loss',
+        'Detected vulnerability': 'vulnerable-system',
+        'Security assessment': 'other',
+        'Configuration/Maintenance': 'other',
+        'Security consulting': 'other'
+
+        }
 
     unique_field_mapping = {'id': 'extra.id'
                             }
