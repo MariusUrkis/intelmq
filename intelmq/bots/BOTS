@@ -1034,6 +1034,16 @@
                 "separator": "<nothing or \n or sth>"
             }
         },
+        "TCP1": {
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
+            "module": "intelmq.bots.outputs.tcp.output1",
+            "parameters": {
+                "hierarchical_output": false,
+                "ip": "<ip>",
+                "port": "<port>",
+                "separator": "<nothing or \n or sth>"
+            }
+        },
         "UDP": {
             "description": "UDP is a simple UDP bot responsible to send events to a udp port (e.g.: syslog daemon). For more explanations about the parameters field, checkout out the README.md",
             "module": "intelmq.bots.outputs.udp.output",
