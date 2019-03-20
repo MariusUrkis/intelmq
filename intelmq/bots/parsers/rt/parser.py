@@ -109,6 +109,13 @@ class RTParserBotPlain(Bot):
 
         if self.parameters.fields_to_collect:
            self.fields_to_collect = [f.strip() for f in self.parameters.fields_to_collect.split(',')]
+        
+        if self.parameters.timezone:
+            self.TZ = tz.gettz(self.parameters.timezone)
+            if not self.TZ:
+                self.TZ = tz.gettz('UTC')
+        else:
+            self.TZ = tz.gettz('UTC')
 
     def process(self):
         report = self.receive_message()
@@ -184,12 +191,12 @@ class RTParserBotPlain(Bot):
     def __format_date(self, date_string):
         date_obj = datetime.strptime(date_string, '%Y-%m-%d %H:%M:%S')
         
-        return date_obj.replace(tzinfo=tz.tzutc())
+        return date_obj.replace(tzinfo=self.TZ)
 
     def __format_rt_date(self, date_string):
         # Tue May 08 16:19:50 2018
         date_obj = datetime.strptime(date_string, '%a %b %d %H:%M:%S %Y')
 
-        return date_obj.replace(tzinfo=tz.tzutc())
+        return date_obj.replace(tzinfo=self.TZ)
 
 BOT = RTParserBotPlain

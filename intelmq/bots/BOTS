@@ -167,6 +167,7 @@
                 "search_subject_like": "Report",
                 "search_queue": "Internal",
                 "search_status": "open",
+                "status_except": "rejected",
                 "set_status": "finished",
                 "uri": "http://localhost/rt/REST/1.0",
                 "user": "intelmq",
@@ -565,7 +566,8 @@
             "description": "Request Tracker Ticket Parser is the bot responsible to parse the report of Request Tracker Ticket data",
             "module": "intelmq.bots.parsers.rt.parser",
             "parameters": {
-                "fields_to_collect": null 
+                "fields_to_collect": null,
+                "timezone": "Europe/Vilnius"
             }
         },
         "Shodan": {
