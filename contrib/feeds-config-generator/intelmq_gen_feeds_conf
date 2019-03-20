@@ -66,7 +66,8 @@ def gen_configurations(provider, feed):
         runtime_config[bot_id] = dict(description="N/A",
                                       group=bot_type.title(),
                                       module=info['module'],
-                                      parameters=parameters)
+                                      parameters=parameters,
+                                      name=feed + " " + bot_type.title())
 
     collector_bot_id = sanitize_bot_id(provider + "-" + feed + "-collector")
     parser_bot_id = sanitize_bot_id(provider + "-" + feed + "-parser")
