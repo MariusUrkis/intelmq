@@ -23,6 +23,7 @@ class RTTicketCollectorBot(CollectorBot):
                          'search_requestor': 'Requestor',
                          'search_status': 'Status',
                          'search_subject_like': 'Subject__like',
+                         'status_except': 'Status__notexact',
                          }
     """
     Configuration parameters:
