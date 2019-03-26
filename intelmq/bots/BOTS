@@ -17,6 +17,21 @@
                 "provider": "Calidog"
             }
         },
+        "ElasticSearch": {
+            "description": "Elasticsearch query collector bot.",
+            "module": "intelmq.bots.collectors.elasticsearch.collector",
+            "parameters": {
+                "elk_url": "http://127.0.0.1:9200/syslog-*/_search",
+                "feed": "ELK",
+                "provider": "<provider>",
+                "query_file": "<ELK query file>",
+                "hit_count": 1,
+                "hit_sum": 100,
+                "period_to_query": 24,
+                "classification": "scanner",
+                "rate_limit": 3600
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -992,6 +1007,17 @@
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
                 "redis_timeout": 50000
+            }
+        },
+        "Request Tracker": {
+            "description": "Request Tracker ticket creation bot.",
+            "module": "intelmq.bots.outputs.rt.output",
+            "parameters": {
+                "uri": "http://localhost/REST/1.0",
+                "verify_cert": true,
+                "user": "apiuser",
+                "password": "<password>",
+                "queue": "Incidents"
             }
         },
         "SMTP": {
