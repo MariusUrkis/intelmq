@@ -37,6 +37,7 @@ class ELKCollectorBot(CollectorBot):
             if 'range' in item:
                 for key, value in item.items():
                     for k, v in value.items():
+                        # Setting up time range. Changing original values specified in file
                         v['gte'] = 'now-' + str(period_to_query) + 'h'
                         v['lte'] = 'now'
 
