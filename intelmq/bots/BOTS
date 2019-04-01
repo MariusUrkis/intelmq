@@ -1012,14 +1012,17 @@
             }
         },
         "Request Tracker": {
-            "description": "Request Tracker ticket creation bot.",
+            "description": "Request Tracker ticket creation bot. Create linked Investigation queue ticket if needed, according to the RTIR flow",
             "module": "intelmq.bots.outputs.rt.output",
             "parameters": {
                 "uri": "http://localhost/REST/1.0",
                 "verify_cert": true,
                 "user": "apiuser",
                 "password": "<password>",
-                "queue": "Incidents"
+                "queue": "Incidents",
+                "create_investigation": false,
+                "investigation_fields": "time.source,time.observation,source.ip,source.port,source.fqdn,source.url,classification.taxonomy,classification.type,classification.identifier,event_description.url,event_description.text,malware.name,protocol.application,protocol.transport",
+                "final_status": "resolved"
             }
         },
         "SMTP": {

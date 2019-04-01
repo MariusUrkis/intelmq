@@ -21,6 +21,9 @@ class RTOutputBot(Bot):
     # Some event attributes are mapped to ticket custom fields 
     CF_mapping = {'Description': 'event_description.text',
         'source.ip': 'IP',
+        'extra.incident.severity': 'Incident Severity',
+        'extra.incident.importance': 'Importance',
+        'extra.organization.name': 'Customer'
 #        'source.url': 'URL',
     }
     # special mapping for Incident Type values
@@ -84,6 +87,21 @@ class RTOutputBot(Bot):
         if rt is None:
             self.logger.error('Could not import rt. Please install it.')
             self.stop()
+
+
+        self.fieldnames = getattr(self.parameters, 'investigation_fields')
+        if isinstance(self.fieldnames, str):
+            self.fieldnames = self.fieldnames.split(',')
+        # Investigations ticket can be created only when we work with Incidents ticket 
+        # and there is a parameter provided
+        if getattr(self.parameters, 'queue', 'None') == 'Incidents' and getattr(self.parameters, 'create_investigation', False):
+            self.create_investigation = True
+        else:
+            self.create_investigation = False
+        self.final_status = getattr(self.parameters, 'final_status', None)
+
+        
+
             
     def process(self):
         event = self.receive_message()
@@ -94,14 +112,16 @@ class RTOutputBot(Bot):
             raise ValueError('Login failed.')          
         kwargs = {}
         # we make subject in form of "Incident, Provider:feed name: IP"
-        subject = 'Incident';
-        if event.get('feed.provider'):
-            subject += ", " + event['feed.provider']
-        if event.get('feed.name'):
-            subject += ":" + event['feed.name']
+        self.subject = 'Incident notification';
+#        if event.get('feed.provider'):
+#            self.subject += ", " + event['feed.provider']
+#        if event.get('feed.name'):
+#            self.subject += ":" + event['feed.name']
         if event.get('source.ip'):
-            subject += ": " + event['source.ip']
-        content = ""
+            self.subject += ", " + event['source.ip']       
+        if event.get('event_description.text'):
+            self.content = event['event_description.text'] + "\n\n"
+        
         classification = ""
         incident_type = ""
         if event.get('classification.type'):
@@ -109,7 +129,7 @@ class RTOutputBot(Bot):
             self.logger.debug("Classification assigned: %s, %s", classification, incident_type)
             kwargs["CF_" + self.CF_taxonomyL1] = classification
             kwargs["CF_" + self.CF_taxonomyL2] = incident_type
-            
+        content = self.content    
         for key, value in event.items():
             # Add all event attributes to the body of the incident ticket
             content += key + ": " + str(value) + "\n"
@@ -123,10 +143,33 @@ class RTOutputBot(Bot):
                 str_value = str(value)
                 kwargs["CF_" + self.CF_mapping.get(key)] = str_value
                 self.logger.debug("Added argument line CF_%s: %s", self.CF_mapping.get(key), kwargs["CF_" + self.CF_mapping.get(key)])
-        self.logger.debug("RT ticket subject: %s", subject)
-        ticket_id = RT.create_ticket(Queue=self.parameters.queue, Subject=subject, Text=content, **kwargs)
+        self.logger.debug("RT ticket subject: %s", self.subject)
+        ticket_id = RT.create_ticket(Queue=self.parameters.queue, Subject=self.subject, Text=content, **kwargs)
         if ticket_id > -1:
-            self.logger.info("RT ticket created: %i", ticket_id)
+            self.logger.debug("RT ticket created: %i", ticket_id)
+            if event.get('source.abuse_contact') and self.create_investigation:
+                content = self.content
+                requestor = event.get('source.abuse_contact')
+                # only selected fields goes to the investigation
+                for key in self.fieldnames:
+                    if event.get(key):
+                        content += key + ": " + str(event.get(key)) + "\n"
+                investigation_id = RT.create_ticket(Queue="Investigations", Subject=self.subject, Text=content, Requestors=requestor)
+                
+                if investigation_id > -1:
+                    self.logger.debug("Investigation ticket created: %i", investigation_id)
+                    # make a link between Incident and Investigation tickets
+                    if RT.edit_link(investigation_id, 'MemberOf', ticket_id):
+                        self.logger.debug("Investigation ticket %i linked to parent: %i", investigation_id, ticket_id)
+                    else:
+                        self.logger.error("Failed to link tickets %i -> %i", ticket_id, investigation_id)
+                else:
+                    self.logger.error("Failed to create RT Investigation ticket")
+            if self.final_status:
+                if RT.edit_ticket(ticket_id, Status=self.final_status):
+                    self.logger.debug("Status changed to %s for ticket %i", self.final_status, ticket_id)
+                else:
+                    self.logger.error("Failed to change status for RT ticket %i", ticket_id)            
         else:
             self.logger.error("Failed to create RT ticket")
         self.acknowledge_message()
